@@ -2,51 +2,51 @@ package org.example;
 import java.util.*;
 
 public class PriceList {
-    private Map<String, List<Products>> category = new HashMap<>();
+    private Map<String, List<Products>> priceList = new HashMap<>();
 
     public void addCategory(String newCategory) {
-        if (category.containsKey(newCategory)) {
+        if (priceList.containsKey(newCategory)) {
             System.out.println("Категория с таким именем уже существует!");
         } else {
-            category.put(newCategory, new ArrayList<>());
+            priceList.put(newCategory, new ArrayList<>());
             System.out.println("Категория успешно создана!!!");
         }
     }
 
     public void addProducts(Products products, String groupNames) {
-        if (!category.containsKey(groupNames)) {
+        if (!priceList.containsKey(groupNames)) {
             System.out.println("Такой катагории не существует!");
         } else {
-            List<Products> groupProductsList = category.get(groupNames);
+            List<Products> groupProductsList = priceList.get(groupNames);
             groupProductsList.add(products);
             System.out.println("Товар в категорию \"" + groupNames + "\" успешно добавлен!");
         }
     }
 
-    public void getDescriptionProduct(String inputDescription) {
-        for (Map.Entry<String, List<Products>> a : category.entrySet()) {
+    public String getDescriptionProduct(String inputDescription) {
+        for (Map.Entry<String, List<Products>> a : priceList.entrySet()) {
             List<Products> groupOfProducts = a.getValue();
             for (Products c : groupOfProducts) {
                 if (c.getName().equals(inputDescription)) {
-                    System.out.println("Описание товара: " + c.getProductsDescription());
+                    return "Описание товара: " + c.getProductsDescription();
                 }
             }
         }
-        System.out.println("Нам не удалось найти описание товара по Вашему запросу :(");
+        return "Нам не удалось найти описание товара по Вашему запросу :(";
     }
 
-    public Map<String, List<Products>> getCategory() {
-        return category;
+    public Map<String, List<Products>> getPriceList() {
+        return priceList;
     }
 
-    public void setCategory(Map<String, List<Products>> category) {
-        this.category = category;
+    public void setPriceList(Map<String, List<Products>> priceList) {
+        this.priceList = priceList;
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<String, List<Products>> a : category.entrySet()) {
+        for (Map.Entry<String, List<Products>> a : priceList.entrySet()) {
             sb.append(a.getKey());
             sb.append("\n");
             for (Products products : a.getValue()) {

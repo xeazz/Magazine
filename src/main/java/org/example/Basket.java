@@ -16,6 +16,7 @@ public class Basket {
             old = basketList.get(products.getName());
             old.setAmount(old.getAmount() + 1);
             basketList.replace(products.getName(), old);
+            System.out.println("Вы ещё раз добавили " + products.getName() + " в Вашу корзину");
         } else {
             products.setAmount(1);
             basketList.put(products.getName(), products);
@@ -25,19 +26,21 @@ public class Basket {
     }
 
     public void remove(Products products) {
-        if (products.isEmpty()) {
-            System.out.println("Данные введены некорректно!");
-        }
-        if (basketList.containsKey(products.getName())) {
-            old = basketList.get(products.getName());
-            old.setAmount(products.getAmount() - 1);
-            if (old.getAmount() != 0) {
-                basketList.replace(products.getName(), old);
-                totalCost -= products.getCost();
-            } else {
-                basketList.remove(products.getName(), products);
-                totalCost -= products.getCost();
-                System.out.println("Товар успешно удален из корзины!");
+        if (products != null) {
+            if (products.isEmpty()) {
+                System.out.println("Данные введены некорректно!");
+            }
+            if (basketList.containsKey(products.getName())) {
+                old = basketList.get(products.getName());
+                old.setAmount(products.getAmount() - 1);
+                if (old.getAmount() != 0) {
+                    basketList.replace(products.getName(), old);
+                    totalCost -= products.getCost();
+                } else {
+                    basketList.remove(products.getName(), products);
+                    totalCost -= products.getCost();
+                    System.out.println("Товар успешно удален из корзины!");
+                }
             }
         } else {
             System.out.println("К сожалению, выбранный Вами товар отсутствует в корзине :(");
@@ -46,6 +49,7 @@ public class Basket {
     }
 
     public int getTotalCost() {
+
         return totalCost;
     }
 

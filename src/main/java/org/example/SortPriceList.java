@@ -1,6 +1,5 @@
 package org.example;
 import java.util.*;
-
 import java.util.stream.Collectors;
 
 public class SortPriceList implements SortValue, SortKey {
@@ -8,21 +7,21 @@ public class SortPriceList implements SortValue, SortKey {
 
     @Override
     public void sortCategory(PriceList priceList) {
-        result = priceList.getCategory().entrySet()
+        result = priceList.getPriceList().entrySet()
                 .stream()
                 .sorted(Map.Entry.comparingByKey())
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
                         (oldValue, newValue) -> oldValue, LinkedHashMap::new));
-        priceList.setCategory(result);
+        priceList.setPriceList(result);
     }
 
     @Override
     public void sortProducts(PriceList priceList) {
-        result = priceList.getCategory();
+        result = priceList.getPriceList();
         for (List<Products> products : result.values()) {
             Collections.sort(products);
         }
-        priceList.setCategory(result);
+        priceList.setPriceList(result);
     }
 
     @Override

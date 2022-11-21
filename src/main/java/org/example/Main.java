@@ -3,6 +3,7 @@ import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
+        Service service = new Service();
         PriceList priceList = new PriceList();
         SortPriceList sortPriceList = new SortPriceList();
         Basket basket = new Basket();
@@ -20,98 +21,28 @@ public class Main {
                 System.out.println("Программа завершена");
                 break;
             }
-            menuSelection(scanner, input, priceList, sortPriceList, basket, parserToJson, jsonFileWriter);
+            menuSelection(scanner, input, priceList, sortPriceList, basket, parserToJson, jsonFileWriter, service);
         }
     }
 
     public static void menuSelection(Scanner scanner, String input, PriceList priceList,
                                      SortPriceList sortPriceList, Basket basket,
-                                     ParserToJson parserToJson, JsonFileWriter jsonFileWriter) {
+                                     ParserToJson parserToJson, JsonFileWriter jsonFileWriter, Service service) {
         switch (input) {
-            case "0" -> {
-                printMenu();
-                System.out.println("Введите название товара, на которое хотите получить описание");
-                String inputDescription = scanner.nextLine();
-                priceList.getDescriptionProduct(inputDescription);
-            }
+            case "0" -> service.getDescription(scanner, priceList);
+
             case "1" -> {
-                printMenu();
-                System.out.print("Выберите категорию товара: ");
-                String selectCategory = scanner.nextLine();
-                System.out.print("Выберите товар из категории: ");
-                String selectProduct = scanner.nextLine();
-                if (addProductsToTheCart(selectCategory, selectProduct, priceList, basket)) {
-                    System.out.println("товар успешно добавлен в корзину ");
-                    System.out.println(basket.getTotalCost());
-                } else {
-                    System.out.println("К сожалению, мы не смогли найти товар по Вашему запросу :(");
-                }
+                if (!service.addProductsToTheCart(scanner, priceList, basket))
+                    System.out.println("Выбранный Вами товар отсутствует в каталоге товаров!");
             }
-            case "2" -> {
-                if (basket.getBasket().isEmpty()) {
-                    System.out.print("Ваша корзина пуста! Из нее нечего удалять...");
-                } else {
-                    System.out.print("Выберите категорию товара: ");
-                    String remove = scanner.nextLine();
-                    for (Map.Entry<String, Products> a : basket.getBasket().entrySet()) {
-                        if (a.getKey().equals(remove)) {
-                            Products b = a.getValue();
-                            basket.remove(b);
-                            System.out.println("Товар успешно удален!");
-                        }
-                    }
-                }
-            }
-            case "3" -> {
-                sortPriceList.sortCategory(priceList);
-                System.out.println(sortPriceList);
-            }
-            case "4" -> {
-                sortPriceList.sortProducts(priceList);
-                System.out.println(sortPriceList);
-            }
-            case "5" -> {
-                if (basket.getBasket().isEmpty()) {
-                    System.out.println("Ваша корзина пуста :(");
-                } else {
-                    System.out.println(basket);
-                    System.out.println("Общая сумма покупок составила: " + basket.getTotalCost() + " руб.");
-                }
-            }
-            case "6" -> {
-                if (basket.getBasket().isEmpty()) {
-                    System.out.println("Ваша корзина пуста :(");
-                } else {
-                    jsonFileWriter.outputJson(parserToJson.parseJson(basket));
-                    System.out.println("JSON-файл успешно создан !!!");
-                }
-            }
-            case "What is JSON" -> parserToJson.description();
-            case "7" -> {
-                if (basket.getBasket().isEmpty()) {
-                    System.out.println("Ваша корзина пуста :(");
-                } else {
-                    basket.clear();
-                    System.out.println("Корзина успешно очищена!!!");
-                }
-            }
+            case "2" -> service.removeItem(scanner, basket);
+            case "3" -> service.sortingCategory(sortPriceList, priceList);
+            case "4" -> service.sortingProducts(sortPriceList, priceList);
+            case "5" -> service.viewShoppingCart(basket);
+            case "6" -> service.createJsonFile(basket, jsonFileWriter, parserToJson);
+            case "7" -> service.clearCart(basket);
+            case "What is JSON" -> service.jsonDescription(parserToJson);
         }
-
-    }
-
-    public static boolean addProductsToTheCart(String selectCategory, String selectProduct, PriceList priceList, Basket basket) {
-        for (Map.Entry<String, List<Products>> a : priceList.getCategory().entrySet()) {
-            if (a.getKey().equals(selectCategory)) {
-                List<Products> groupOfProducts = a.getValue();
-                for (Products c : groupOfProducts) {
-                    if (c.getName().equals(selectProduct)) {
-                        basket.add(c);
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
     }
 
     public static void printMenu() {
@@ -122,7 +53,7 @@ public class Main {
         System.out.println("3. Отсортировать категории по алфавиту");
         System.out.println("4. Отсортировать товар по алфавиту");
         System.out.println("5. Показать содержимое корзины");
-        System.out.println("6. Создать файл списка покупок (.json) \n Для справки \"Что такое JSON\" " +
+        System.out.println("6. Создать файл списка покупок (.json). Для справки \"Что такое JSON\" " +
                 "наберите \"What is JSON?\"");
         System.out.println("7. Очистить корзину");
     }

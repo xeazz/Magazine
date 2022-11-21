@@ -4,6 +4,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
+
 public class ParserToJson implements Description {
     private final List<Basket> list = new ArrayList<>();
 
